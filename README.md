@@ -1,6 +1,8 @@
 # grunt-cjsify
 
-> Build CommonJS modules for the browser with Grunt.
+A Grunt plugin for using
+[CommonJS Everywhere](https://github.com/michaelficarra/commonjs-everywhere)
+browser budler.
 
 ## Getting Started
 This plugin requires Grunt `~0.4.1`
