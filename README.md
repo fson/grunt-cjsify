@@ -101,3 +101,12 @@ Default value: `false`
 Setting this to `true` adds wrapper to JS files that binds `this`
 on the top level to global object. This can be used for supporting
 legacy non-CommonJS scripts that define variables on the global scope.
+
+#### options.sourceMapRoot
+Type: `String`
+Default value: `null`
+
+The source root for the source map, i.e.
+the URL root from which all sources are relative.
+For the source mapping to work the original sources need to be served on the
+web server. Set this to the URL where the sources are located.

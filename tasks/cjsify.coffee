@@ -29,6 +29,7 @@ module.exports = (grunt) ->
       ignoreMissing: false
       useCoffeeScriptV1: false
       useGlobalContext: false
+      sourceMapRoot: null
 
     createOutputPaths = (dest) ->
       {
@@ -73,7 +74,7 @@ module.exports = (grunt) ->
       ast = cjsify entryPoint, options.root, options
       {map, code} = generate ast,
         sourceMap: true
-        sourceMapRoot: options.root
+        sourceMapRoot: options.sourceMapRoot
         sourceMapWithCode: true
         file: paths.dest
 
