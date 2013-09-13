@@ -1,7 +1,7 @@
 {
   "name": "grunt-cjsify",
   "description": "Build CommonJS modules for the browser with Grunt.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "homepage": "https://github.com/hdmessaging/grunt-cjsify",
   "repository": {
     "type": "git",
