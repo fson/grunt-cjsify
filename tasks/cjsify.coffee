@@ -30,6 +30,7 @@ module.exports = (grunt) ->
       useCoffeeScriptV1: false
       useGlobalContext: false
       sourceMapRoot: null
+      sourceMap: false
 
     createOutputPaths = (dest) ->
       {
@@ -40,18 +41,22 @@ module.exports = (grunt) ->
 
     if options.useCoffeeScriptV1
       options.handlers['.coffee'] = (source, filename) ->
-        {js, v3SourceMap} = CoffeeScript.compile source,
-                                                 filename: filename,
-                                                 bare: true,
-                                                 sourceMap: true
-        sourceMap = new SourceMapConsumer v3SourceMap
-        ast = parse js, loc: true
-        traverse ast,
-          enter: (node) ->
-            node.loc.start = sourceMap.originalPositionFor node.loc.start
-            node.loc.start.source = filename
-            node.loc.end = sourceMap.originalPositionFor node.loc.end
-            node.loc.end.source = filename
+        result = CoffeeScript.compile source,
+                                      filename: filename,
+                                      bare: true,
+                                      sourceMap: options.sourceMap
+        if options.sourceMap
+          {js, v3SourceMap} = result
+          sourceMap = new SourceMapConsumer v3SourceMap
+          ast = parse js, loc: true
+          traverse ast,
+            enter: (node) ->
+              node.loc.start = sourceMap.originalPositionFor node.loc.start
+              node.loc.start.source = filename
+              node.loc.end = sourceMap.originalPositionFor node.loc.end
+              node.loc.end.source = filename
+        else
+          ast = parse result
         ast
 
     if options.useGlobalContext
@@ -72,15 +77,17 @@ module.exports = (grunt) ->
       paths = createOutputPaths f.dest
 
       ast = cjsify entryPoint, options.root, options
-      {map, code} = generate ast,
-        sourceMap: true
-        sourceMapRoot: options.sourceMapRoot
-        sourceMapWithCode: true
-        file: paths.dest
 
-      js = "#{code}\n\n//@ sourceMappingURL=#{paths.mapFileName}\n"
-
+      if options.sourceMap
+        {map, code} = generate ast,
+          sourceMap: true
+          sourceMapRoot: options.sourceMapRoot
+          sourceMapWithCode: true
+          file: paths.dest
+        js = "#{code}\n\n//@ sourceMappingURL=#{paths.mapFileName}\n"
+        grunt.file.write paths.mapDest, map
+        grunt.log.writeln "File #{paths.mapDest} created."
+      else
+        js = generate ast, file: paths.dest
       grunt.file.write paths.dest, js
       grunt.log.writeln "File #{paths.dest} created."
-      grunt.file.write paths.mapDest, map
-      grunt.log.writeln "File #{paths.mapDest} created."
