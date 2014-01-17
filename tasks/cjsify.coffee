@@ -23,7 +23,15 @@ module.exports = (grunt) ->
       aliases: {}
       handlers:
         '.eco': (source, filename) ->
-          content = eco.precompile source
+          try
+            content = eco.precompile source
+          catch err
+            try
+              code = eco.preprocess source
+              message = CoffeeScript.helpers.prettyErrorMessage(err, filename, code, true)
+            catch
+              message = err.message
+            grunt.warn(message)
           parse "module.exports = #{content}", loc: true
       node: false
       ignoreMissing: false
@@ -41,10 +49,14 @@ module.exports = (grunt) ->
 
     if options.useCoffeeScriptV1
       options.handlers['.coffee'] = (source, filename) ->
-        result = CoffeeScript.compile source,
-                                      filename: filename,
-                                      bare: true,
-                                      sourceMap: options.sourceMap
+        try
+          result = CoffeeScript.compile source,
+                                        filename: filename,
+                                        bare: true,
+                                        sourceMap: options.sourceMap
+        catch err
+          message = CoffeeScript.helpers.prettyErrorMessage(err, filename, source, true)
+          grunt.warn(message)
         if options.sourceMap
           {js, v3SourceMap} = result
           sourceMap = new SourceMapConsumer v3SourceMap
