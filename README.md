@@ -2,7 +2,7 @@
 
 A Grunt plugin for using
 [CommonJS Everywhere](https://github.com/michaelficarra/commonjs-everywhere)
-browser budler.
+browser bundler.
 
 ## Getting Started
 This plugin requires Grunt `~0.4.1`
