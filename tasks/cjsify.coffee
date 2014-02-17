@@ -29,7 +29,7 @@ module.exports = (grunt) ->
             try
               code = eco.preprocess source
               message = CoffeeScript.helpers.prettyErrorMessage(err, filename, code, true)
-            catch
+            catch preprocessErr
               message = err.message
             grunt.warn(message)
           parse "module.exports = #{content}", loc: true
